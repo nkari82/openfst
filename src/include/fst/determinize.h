@@ -956,26 +956,27 @@ namespace internal {
 
 // Initialization of transducer determinization implementation, which is defined
 // after DeterminizeFst since it calls it.
-template <class A, GallicType G, class D, class F, class T>
-void DeterminizeFstImpl<A, G, D, F, T>::Init(const Fst<A> &fst, F *filter) {
-  // Mapper to an acceptor.
-  const ToFst to_fst(fst, ToMapper());
-  auto *to_filter = filter ? new ToFilter(to_fst, filter) : nullptr;
-  // This recursive call terminates since it is to a (non-recursive)
-  // different constructor.
-  const CacheOptions copts(GetCacheGc(), GetCacheLimit());
-  const DeterminizeFstOptions<ToArc, ToCommonDivisor, ToFilter, ToStateTable>
-      dopts(copts, delta_, 0, DETERMINIZE_FUNCTIONAL, false, to_filter);
-  // Uses acceptor-only constructor to avoid template recursion.
-  const DeterminizeFst<ToArc> det_fsa(to_fst, nullptr, nullptr, dopts);
-  // Mapper back to transducer.
-  const FactorWeightOptions<ToArc> fopts(
-      CacheOptions(true, 0), delta_, kFactorFinalWeights, subsequential_label_,
-      subsequential_label_, increment_subsequential_label_,
-      increment_subsequential_label_);
-  const FactorWeightFst<ToArc, FactorIterator> factored_fst(det_fsa, fopts);
-  from_fst_ = fst::make_unique<FromFst>(factored_fst,
-                                         FromMapper(subsequential_label_));
+template <class Arc, GallicType G, class CommonDivisor, class Filter, class StateTable>
+void DeterminizeFstImpl<Arc, G, CommonDivisor, Filter, StateTable>::Init(const Fst<Arc>& fst, Filter* filter)
+{
+	// Mapper to an acceptor.
+	const ToFst to_fst(fst, ToMapper());
+	auto* to_filter = filter ? new ToFilter(to_fst, filter) : nullptr;
+	// This recursive call terminates since it is to a (non-recursive)
+	// different constructor.
+	const CacheOptions copts(GetCacheGc(), GetCacheLimit());
+	const DeterminizeFstOptions<ToArc, ToCommonDivisor, ToFilter, ToStateTable>
+		dopts(copts, delta_, 0, DETERMINIZE_FUNCTIONAL, false, to_filter);
+	// Uses acceptor-only constructor to avoid template recursion.
+	const DeterminizeFst<ToArc> det_fsa(to_fst, nullptr, nullptr, dopts);
+	// Mapper back to transducer.
+	const FactorWeightOptions<ToArc> fopts(
+		CacheOptions(true, 0), delta_, kFactorFinalWeights, subsequential_label_,
+		subsequential_label_, increment_subsequential_label_,
+		increment_subsequential_label_);
+	const FactorWeightFst<ToArc, FactorIterator> factored_fst(det_fsa, fopts);
+	from_fst_ = fst::make_unique<FromFst>(factored_fst,
+		FromMapper(subsequential_label_));
 }
 
 }  // namespace internal

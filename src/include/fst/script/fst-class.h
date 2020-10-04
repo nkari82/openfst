@@ -18,6 +18,14 @@
 #include <fst/script/arc-class.h>
 #include <fst/script/weight-class.h>
 
+#ifdef min
+#undef min
+#endif
+
+#ifdef max
+#undef max
+#endif
+
 // Classes to support "boxing" all existing types of FST arcs in a single
 // FstClass which hides the arc types. This allows clients to load
 // and work with FSTs without knowing the arc type. These classes are only

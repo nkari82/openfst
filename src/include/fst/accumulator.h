@@ -19,6 +19,14 @@
 #include <fst/expanded-fst.h>
 #include <fst/replace.h>
 
+#ifdef min
+#undef min
+#endif
+
+#ifdef max
+#undef max
+#endif
+
 namespace fst {
 
 // This class accumulates arc weights using the semiring Plus().

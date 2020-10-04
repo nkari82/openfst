@@ -6,7 +6,14 @@
 
 #include <fst/compat.h>
 #ifndef FST_NO_DYNAMIC_LINKING
+#ifdef __linux__
 #include <dlfcn.h>
+#elif defined(_WIN32)
+#include <windows.h>
+#define RTLD_LAZY 0x000
+inline void* dlopen(const char* filename, int flag) { (void)flag; return LoadLibrary(filename); }
+inline const char* dlerror(void) { return ""; }
+#endif
 #endif
 #include <map>
 #include <string>
