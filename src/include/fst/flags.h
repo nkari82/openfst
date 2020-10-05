@@ -223,4 +223,5 @@ inline void InitFst(const char *usage, int *argc, char ***argv, bool rmflags) {
 
 void ShowUsage(bool long_usage = true);
 
+extern bool FLAGS_help;
 #endif  // FST_LIB_FLAGS_H_
